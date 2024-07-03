@@ -39,8 +39,8 @@ dependencies:
     path: rust_builder
   flutter_rust_bridge: ^2.0.0
   supabase_flutter: ^2.5.7
-  supabase_auth_ui: ^0.5.0
   flutter_dotenv: ^5.1.0
+  get: ^4.6.6
 
 dev_dependencies:
   flutter_test:
@@ -95,5 +95,5 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-assets:
-  - .env
+  assets:
+    - .env
