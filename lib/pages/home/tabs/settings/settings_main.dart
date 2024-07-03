@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingsMain extends StatelessWidget {
   const SettingsMain({super.key});
@@ -52,7 +53,12 @@ class SettingsMain extends StatelessWidget {
                   ),
                 ],
               ),
-              CupertinoButton.filled(child: const Text("Logout"), onPressed: () {})
+              CupertinoButton.filled(
+                child: const Text("Logout"),
+                onPressed: () {
+                  Supabase.instance.client.auth.signOut();
+                },
+              ),
             ],
           ),
         ],
