@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rust/global.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomSheetRoute<T> extends PageRoute<T> {
   final WidgetBuilder builder;
@@ -87,7 +88,7 @@ class _NewChatModalState extends State<NewChatModal> {
               return ListTile(
                 title: Text(snapshot.data?[index]['name']),
                 onTap: () {
-                  log('New chat with ${snapshot.data?[index]['name']}');
+                  createChat(snapshot.data?[index]['id']);
                 },
               );
             },
@@ -95,5 +96,41 @@ class _NewChatModalState extends State<NewChatModal> {
         },
       ),
     );
+  }
+
+  Future<void> createChat(String userId) async {
+    int? chatId;
+    try {
+      // Insert chat and get the chat ID
+      final chatResponse = await DB.chats.insert({}).select().single();
+      chatId = chatResponse['id'];
+
+      // Insert current user into chat_user
+      final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+      await DB.chatUser.insert({
+        'chat_id': chatId,
+        'user_id': currentUserId,
+      });
+
+      // Insert other user into chat_user
+      await DB.chatUser.insert({
+        'chat_id': chatId,
+        'user_id': userId,
+      });
+
+      // Close the dialog or perform other success actions
+      Get.back();
+    } catch (error) {
+      // Rollback: Delete the chat and chat_user records if any error occurs
+      if (chatId != null) {
+        await DB.chats.delete().eq('id', chatId);
+        await DB.chatUser.delete().eq('chat_id', chatId);
+      }
+
+      // Handle the error
+      log('Error creating chat: $error');
+      // Optionally show a Snackbar or Dialog to inform the user
+      Get.snackbar("Error", "Failed to create chat. Please try again.");
+    }
   }
 }

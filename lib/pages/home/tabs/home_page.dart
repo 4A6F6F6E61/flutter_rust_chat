@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_rust/pages/home/tabs/chats/chats_tab.dart';
 import 'package:flutter_rust/pages/home/tabs/fibonacci/fibonacci_tab.dart';
-import 'package:flutter_rust/pages/home/tabs/home/home_controller.dart';
 import 'package:flutter_rust/pages/home/tabs/settings/settings_tab.dart';
 import 'package:get/get.dart';
 

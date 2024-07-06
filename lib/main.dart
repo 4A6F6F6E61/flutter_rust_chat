@@ -1,11 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rust/global.dart';
-import 'package:flutter_rust/pages/home/tabs/fibonacci/fibonacci_tab.dart';
-import 'package:flutter_rust/pages/home/tabs/home/home_binding.dart';
-import 'package:flutter_rust/pages/home/tabs/home/home_page.dart';
-import 'package:flutter_rust/pages/home/tabs/chats/chats_tab.dart';
-import 'package:flutter_rust/pages/home/tabs/settings/settings_tab.dart';
+import 'package:flutter_rust/pages/home/tabs/home_page.dart';
 import 'package:flutter_rust/pages/login/login_binding.dart';
 import 'package:flutter_rust/pages/login/login_page.dart';
 import 'package:flutter_rust/pages/welcome_page.dart';
@@ -110,7 +106,6 @@ class Splash extends StatelessWidget {
         GetPage(
           name: '/',
           page: () => const HomePage(),
-          binding: HomeBinding(),
         ),
       ],
     );

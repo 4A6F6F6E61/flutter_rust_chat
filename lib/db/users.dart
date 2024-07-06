@@ -1,8 +1,14 @@
+import 'package:flutter_rust/db/db_user.dart';
 import 'package:flutter_rust/global.dart';
 
 class Users {
-  Stream<List<Map<String, dynamic>>> getAll() {
+  static Stream<List<Map<String, dynamic>>> getAll() {
     final select = DB.users.select();
     return select.asStream();
+  }
+
+  static Future<DBUser> get(String id) async {
+    final response = await DB.users.select().eq('id', id);
+    return DBUser.fromMap(response.first);
   }
 }
