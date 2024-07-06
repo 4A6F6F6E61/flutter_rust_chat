@@ -17,8 +17,40 @@ class ChatPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(other.name),
       ),
-      body: const Center(
-        child: Text('Chat'),
+      body: Column(
+        children: [
+          Expanded(
+            child: Obx(
+              () => ListView(children: [
+                Center(
+                  child: Text(controller.chat.value.createdAt),
+                ),
+              ]),
+            ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller.messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Message',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: controller.sendMessage,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_rust/db/db_chat.dart';
 import 'package:flutter_rust/db/db_user.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,8 @@ class ChatController extends GetxController {
           createdAt: "")
       .obs;
 
+  TextEditingController messageController = TextEditingController();
+
   @override
   void onInit() {
     chat(Get.arguments);
@@ -21,4 +24,6 @@ class ChatController extends GetxController {
   void onClose() {
     super.onClose();
   }
+
+  void sendMessage() {}
 }
