@@ -14,6 +14,7 @@ class DBChat {
         (await Chats.getParticipants(chat['chat_id'] as int)).map((e) => Users.get(e)).toList();
 
     final participants = await Future.wait(p);
+
     return DBChat(
       id: chat['chat_id'] as int,
       participants: participants,

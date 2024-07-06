@@ -35,7 +35,7 @@ class ChatsTab extends StatelessWidget {
             return ListTile(
               title: Text(other.name),
               onTap: () {
-                // open chat
+                Get.toNamed('/chat', arguments: controller.chats[index]);
               },
             );
           },

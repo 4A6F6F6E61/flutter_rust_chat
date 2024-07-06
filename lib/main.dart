@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rust/global.dart';
+import 'package:flutter_rust/pages/chat/chat_binding.dart';
+import 'package:flutter_rust/pages/chat/chat_page.dart';
 import 'package:flutter_rust/pages/home/tabs/home_page.dart';
 import 'package:flutter_rust/pages/login/login_binding.dart';
 import 'package:flutter_rust/pages/login/login_page.dart';
@@ -106,6 +108,11 @@ class Splash extends StatelessWidget {
         GetPage(
           name: '/',
           page: () => const HomePage(),
+        ),
+        GetPage(
+          name: '/chat',
+          page: () => const ChatPage(),
+          binding: ChatBinding(),
         ),
       ],
     );
