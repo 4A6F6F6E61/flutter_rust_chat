@@ -8,10 +8,10 @@ class SettingsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvoked: (bool b) async {
-        Get.back(id: 1);
+        Get.back(id: 2);
       },
       child: Navigator(
-        key: Get.nestedKey(1),
+        key: Get.nestedKey(2),
         onGenerateRoute: (RouteSettings settings) {
           return GetPageRoute<void>(
             settings: settings,
