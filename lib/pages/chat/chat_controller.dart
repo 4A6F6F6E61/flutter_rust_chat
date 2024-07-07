@@ -41,7 +41,14 @@ class ChatController extends GetxController {
     replyTo(message);
   }
 
+  void clearReplyTo() {
+    replyTo.value = null;
+  }
+
   void sendMessage() async {
+    if (messageController.text.isEmpty) {
+      return;
+    }
     try {
       final chatResponse = await DB.messages
           .insert({
@@ -49,11 +56,14 @@ class ChatController extends GetxController {
             'user_id': Supabase.instance.client.auth.currentUser!.id,
             'content': messageController.text,
             'type': 'text',
+            'reply_to': replyTo.value?.id,
           })
           .select()
           .single();
 
       log(chatResponse.toString());
+
+      replyTo.value = null;
     } catch (e) {
       Get.snackbar('Error', e.toString());
     }

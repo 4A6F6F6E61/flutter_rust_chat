@@ -66,11 +66,11 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
       onHorizontalDragUpdate: _handleDragUpdate,
       onHorizontalDragEnd: _handleDragEnd,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200), // Faster animation
+        duration: const Duration(milliseconds: 100), // Faster animation
         transform: Matrix4.translationValues(_offset, 0, 0),
         child: Container(
           color: Colors.transparent, // Ensure the container covers the entire message widget
-          child: BubbleSpecialThree(
+          child: BubbleNormal(
             text: widget.message.content,
             color: widget.isSender ? Colors.blue : Colors.blueGrey,
             tail: widget.tail,

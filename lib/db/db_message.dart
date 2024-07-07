@@ -3,7 +3,7 @@ class DBMessage {
   final int chatId;
   final String userId;
   final String content;
-  final String? replyTo;
+  final int? replyTo;
   final DateTime createdAt;
   final DateTime updatedAt;
 
