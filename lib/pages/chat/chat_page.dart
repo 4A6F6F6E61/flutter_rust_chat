@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rust/components/swipeable_message.dart';
+import 'package:flutter_rust/db/messages.dart';
 import 'package:flutter_rust/pages/chat/chat_controller.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -157,13 +158,48 @@ class MessagesView extends StatelessWidget {
                   message.userId) {
             tail = true;
           }
+          if (message.replyTo == null) {
+            return SwipeableMessage(
+              message: message,
+              isSender: isSender,
+              tail: tail,
+              onSwipeLeft: controller.messageSwipeLeft,
+              onSwipeRight: controller.messageSwipeRight,
+            );
+          }
+          return FutureBuilder(
+            future: Messages.get(message.replyTo!).then(
+              (value) {
+                return [value];
+              },
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container();
+              }
+              if (snapshot.hasError) {
+                return Container(
+                  color: Colors.red,
+                  child: Text("Error: ${snapshot.error}"),
+                );
+              }
+              if (snapshot.data == null) {
+                return Container();
+              }
+              final replyContent = snapshot.data!.first;
+              final replyUser =
+                  controller.chat.value.participants.firstWhere((u) => u.id == replyContent.userId);
 
-          return SwipeableMessage(
-            message: message,
-            isSender: isSender,
-            tail: tail,
-            onSwipeLeft: controller.messageSwipeLeft,
-            onSwipeRight: controller.messageSwipeRight,
+              return SwipeableMessage(
+                message: message,
+                replyContent: replyContent,
+                replyUser: replyUser,
+                isSender: isSender,
+                tail: tail,
+                onSwipeLeft: controller.messageSwipeLeft,
+                onSwipeRight: controller.messageSwipeRight,
+              );
+            },
           );
         }).toList(),
       ),

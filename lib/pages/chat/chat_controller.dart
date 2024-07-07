@@ -58,20 +58,16 @@ class ChatController extends GetxController {
     }
     loading.value = true;
     try {
-      final chatResponse = await DB.messages
-          .insert({
-            'chat_id': chat.value.id,
-            'user_id': Supabase.instance.client.auth.currentUser!.id,
-            'content': messageController.text,
-            'type': 'text',
-            'reply_to': replyTo.value?.id,
-          })
-          .select()
-          .single();
-
-      log(chatResponse.toString());
+      await DB.messages.insert({
+        'chat_id': chat.value.id,
+        'user_id': Supabase.instance.client.auth.currentUser!.id,
+        'content': messageController.text,
+        'type': 'text',
+        'reply_to': replyTo.value?.id,
+      });
 
       replyTo.value = null;
+      messageController.clear();
     } catch (e) {
       Get.snackbar('Error', e.toString());
     }
