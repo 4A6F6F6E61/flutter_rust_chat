@@ -46,9 +46,9 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: [
-        ChatsTab(),
-        FibonacciTab(),
-        SettingsTab(),
+        const ChatsTab(),
+        const FibonacciTab(),
+        const SettingsTab(),
       ][currentPageIndex],
     );
   }

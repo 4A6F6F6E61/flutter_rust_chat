@@ -174,39 +174,19 @@ class MessagesView extends StatelessWidget {
               onSwipeRight: controller.messageSwipeRight,
             );
           }
-          return FutureBuilder(
-            future: Messages.get(message.replyTo!).then(
-              (value) {
-                return [value];
-              },
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container();
-              }
-              if (snapshot.hasError) {
-                return Container(
-                  color: Colors.red,
-                  child: Text("Error: ${snapshot.error}"),
-                );
-              }
-              if (snapshot.data == null) {
-                return Container();
-              }
-              final replyContent = snapshot.data!.first;
-              final replyUser =
-                  controller.chat.value.participants.firstWhere((u) => u.id == replyContent.userId);
 
-              return SwipeableMessage(
-                message: message,
-                replyContent: replyContent,
-                replyUser: replyUser,
-                isSender: isSender,
-                tail: tail,
-                onSwipeLeft: controller.messageSwipeLeft,
-                onSwipeRight: controller.messageSwipeRight,
-              );
-            },
+          final replyContent = controller.messages.firstWhere((m) => m.id == message.replyTo);
+          final replyUser =
+              controller.chat.value.participants.firstWhere((u) => u.id == replyContent.userId);
+
+          return SwipeableMessage(
+            message: message,
+            replyContent: replyContent,
+            replyUser: replyUser,
+            isSender: isSender,
+            tail: tail,
+            onSwipeLeft: controller.messageSwipeLeft,
+            onSwipeRight: controller.messageSwipeRight,
           );
         }).toList(),
       ),
