@@ -56,7 +56,6 @@ class ChatPage extends StatelessWidget {
                                   children: [
                                     IntrinsicHeight(
                                       child: Row(
-                                        mainAxisSize: MainAxisSize.max,
                                         children: [
                                           const Icon(
                                             Icons.reply,
@@ -67,26 +66,34 @@ class ChatPage extends StatelessWidget {
                                             thickness: 2,
                                             color: Colors.blue,
                                           ),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                controller.replyTo.value!.userId == currentUser?.id
-                                                    ? 'Reply to You'
-                                                    : 'Reply to ${other.name}',
-                                                style: const TextStyle(
-                                                  color: Colors.blue,
+                                          Container(
+                                            constraints: BoxConstraints(
+                                                maxWidth: MediaQuery.of(context).size.width * 0.6),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  controller.replyTo.value!.userId ==
+                                                          currentUser?.id
+                                                      ? 'Reply to You'
+                                                      : 'Reply to ${other.name}',
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    color: Colors.blue,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                controller.replyTo.value!.content,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 20,
+                                                Text(
+                                                  controller.replyTo.value!.content,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),

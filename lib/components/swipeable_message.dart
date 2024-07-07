@@ -164,6 +164,7 @@ class ReplyText extends StatelessWidget {
                       from.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                     Text(
