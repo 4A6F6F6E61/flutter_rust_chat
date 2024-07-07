@@ -33,14 +33,11 @@ class _HomePageState extends State<HomePage> {
             label: 'Chats',
           ),
           NavigationDestination(
-            icon: Badge(child: Icon(Icons.fiber_manual_record_sharp)),
+            icon: Icon(Icons.fiber_manual_record_sharp),
             label: 'Fibonacci',
           ),
           NavigationDestination(
-            icon: Badge(
-              label: Text('2'),
-              child: Icon(Icons.settings),
-            ),
+            icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],
