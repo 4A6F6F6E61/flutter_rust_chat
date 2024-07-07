@@ -7,4 +7,5 @@ class DB {
   static SupabaseQueryBuilder get users => _db.from('users');
   static SupabaseQueryBuilder get chats => _db.from('chats');
   static SupabaseQueryBuilder get chatUser => _db.from('chat_user');
+  static SupabaseQueryBuilder get messages => _db.from('messages');
 }
