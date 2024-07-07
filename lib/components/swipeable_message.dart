@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rust/db/db_message.dart';
 import 'package:flutter_rust/db/db_user.dart';
+import 'package:get/route_manager.dart';
 
 class SwipeableMessage extends StatefulWidget {
   final DBMessage message;
@@ -30,6 +32,7 @@ class SwipeableMessage extends StatefulWidget {
 
 class _SwipeableMessageState extends State<SwipeableMessage> {
   double _offset = 0.0;
+  final GlobalKey _key = GlobalKey();
 
   void _handleDragUpdate(DragUpdateDetails details) {
     if (details.primaryDelta != null) {
@@ -64,11 +67,53 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
     }
   }
 
+  void _showContextMenu(BuildContext context) {
+    final RenderBox renderBox = _key.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy,
+        offset.dx + size.width,
+        offset.dy + size.height,
+      ),
+      items: <PopupMenuEntry>[
+        PopupMenuItem(
+          child: TextButton.icon(
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy message'),
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: widget.message.content));
+              Get.back();
+            },
+          ),
+        ),
+        PopupMenuItem(
+          child: TextButton.icon(
+            icon: const Icon(Icons.delete),
+            label: const Text('Delete'),
+            onPressed: () {
+              // TODO: Handle delete action
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        // Add more menu items here
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onHorizontalDragUpdate: _handleDragUpdate,
       onHorizontalDragEnd: _handleDragEnd,
+      onLongPress: () {
+        _showContextMenu(context);
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 100), // Faster animation
         transform: Matrix4.translationValues(_offset, 0, 0),
@@ -76,9 +121,10 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
           color: Colors.transparent, // Ensure the container covers the entire message widget
           child: Align(
             alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
-            child: Column(
-              children: [
-                Container(
+            child: Builder(
+              key: _key,
+              builder: (context) {
+                return Container(
                   padding: const EdgeInsets.all(8),
                   margin: const EdgeInsets.all(4),
                   constraints: BoxConstraints(
@@ -116,8 +162,8 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
                       ],
                     ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),
