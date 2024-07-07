@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rust/components/swipeable_message.dart';
 import 'package:flutter_rust/db/db_chat.dart';
 import 'package:flutter_rust/db/db_message.dart';
 import 'package:flutter_rust/db/db_user.dart';
@@ -10,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatController extends GetxController {
+  RxBool loading = true.obs;
+
   Rx<DBChat> chat = const DBChat(
           id: -1,
           participants: [
@@ -28,6 +31,10 @@ class ChatController extends GetxController {
   void onInit() {
     chat(Get.arguments);
     messages.bindStream(Messages.getAll(chat.value.id));
+
+    ever(messages, (_) {
+      loading.value = false;
+    });
     super.onInit();
   }
 
@@ -49,6 +56,7 @@ class ChatController extends GetxController {
     if (messageController.text.isEmpty) {
       return;
     }
+    loading.value = true;
     try {
       final chatResponse = await DB.messages
           .insert({

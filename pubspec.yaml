@@ -41,7 +41,6 @@ dependencies:
   flutter_dotenv: ^5.1.0
   get: ^4.6.6
   sheet: ^1.0.0
-  chat_bubbles: ^1.6.0
 
 dev_dependencies:
   flutter_test:

@@ -70,12 +70,38 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
         transform: Matrix4.translationValues(_offset, 0, 0),
         child: Container(
           color: Colors.transparent, // Ensure the container covers the entire message widget
-          child: BubbleNormal(
-            text: widget.message.content,
-            color: widget.isSender ? Colors.blue : Colors.blueGrey,
-            tail: widget.tail,
-            textStyle: const TextStyle(color: Colors.white, fontSize: 16),
-            isSender: widget.isSender,
+          child: Align(
+            alignment: widget.isSender ? Alignment.centerRight : Alignment.centerLeft,
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: (!widget.isSender) && widget.tail
+                          ? const Radius.circular(0)
+                          : const Radius.circular(16),
+                      bottomRight: widget.isSender && widget.tail
+                          ? const Radius.circular(0)
+                          : const Radius.circular(16),
+                      topLeft: const Radius.circular(16),
+                      topRight: const Radius.circular(16),
+                    ),
+                    color: widget.isSender ? Colors.blue : Colors.blueGrey,
+                  ),
+                  child: Text(
+                    widget.message.content,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  // tail: widget.tail,
+                  // isSender: widget.isSender,
+                ),
+              ],
+            ),
           ),
         ),
       ),

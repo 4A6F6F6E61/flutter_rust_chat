@@ -13,23 +13,29 @@ class ChatPage extends StatelessWidget {
     final currentUser = Supabase.instance.client.auth.currentUser;
     final other = controller.chat.value.participants.firstWhere((u) => u.id != currentUser?.id);
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(other.name),
-        ),
-        body: Column(
-          children: [
-            const Expanded(
-              child: MessagesView(),
-            ),
-            Container(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
-              child: SafeArea(
-                top: false,
-                child: Obx(
-                  () => Column(
+    return Obx(
+      () => GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(other.name),
+            bottom: controller.loading()
+                ? const PreferredSize(
+                    preferredSize: Size.fromHeight(5),
+                    child: LinearProgressIndicator(),
+                  )
+                : null,
+          ),
+          body: Column(
+            children: [
+              const Expanded(
+                child: MessagesView(),
+              ),
+              Container(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                child: SafeArea(
+                  top: false,
+                  child: Column(
                     children: [
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 100),
@@ -42,7 +48,7 @@ class ChatPage extends StatelessWidget {
                         },
                         child: controller.replyTo() != null
                             ? Container(
-                                key: ValueKey<int>(1),
+                                key: const ValueKey<int>(1),
                                 padding: const EdgeInsets.all(6),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,7 +98,7 @@ class ChatPage extends StatelessWidget {
                                 ),
                               )
                             : Container(
-                                key: ValueKey<int>(0),
+                                key: const ValueKey<int>(0),
                               ),
                       ),
                       Padding(
@@ -125,8 +131,8 @@ class ChatPage extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -145,11 +151,13 @@ class MessagesView extends StatelessWidget {
         children: controller.messages.reversed.map((message) {
           final isSender = message.userId == Supabase.instance.client.auth.currentUser?.id;
           bool tail = false;
+
           if (controller.messages.last == message ||
               controller.messages[controller.messages.indexOf(message) + 1].userId !=
                   message.userId) {
             tail = true;
           }
+
           return SwipeableMessage(
             message: message,
             isSender: isSender,
