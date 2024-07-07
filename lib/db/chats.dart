@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter_rust/global.dart';
+import 'package:flutter_rust/db/db.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Chats {

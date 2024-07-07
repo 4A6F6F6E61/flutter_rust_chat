@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rust/components/swipeable_message.dart';
 import 'package:flutter_rust/pages/chat/chat_controller.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,7 +15,6 @@ class ChatPage extends StatelessWidget {
     final currentUser = Supabase.instance.client.auth.currentUser;
     final other = controller.chat.value.participants.firstWhere((u) => u.id != currentUser?.id);
 
-    log(controller.messages.toString());
     return Scaffold(
       appBar: AppBar(
         title: Text(other.name),
@@ -25,25 +24,50 @@ class ChatPage extends StatelessWidget {
           const Expanded(
             child: MessagesView(),
           ),
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller.messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'Message',
+          Container(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+            child: SafeArea(
+              top: false,
+              child: Obx(
+                () => Column(
+                  children: [
+                    if (controller.replyTo.value != null)
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(controller.replyTo.value!.content),
+                            IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () {
+                                controller.replyTo(null);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: controller.messageController,
+                              decoration: const InputDecoration(
+                                hintText: 'Message',
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.send),
+                            onPressed: controller.sendMessage,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: controller.sendMessage,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -70,12 +94,12 @@ class MessagesView extends StatelessWidget {
                   message.userId) {
             tail = true;
           }
-          return BubbleSpecialThree(
-            text: message.content,
-            color: isSender ? Colors.blue : Colors.blueGrey,
-            tail: tail,
-            textStyle: const TextStyle(color: Colors.white, fontSize: 16),
+          return SwipeableMessage(
+            message: message,
             isSender: isSender,
+            tail: tail,
+            onSwipeLeft: controller.messageSwipeLeft,
+            onSwipeRight: controller.messageSwipeRight,
           );
         }).toList(),
       ),

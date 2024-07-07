@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_rust/db/db_message.dart';
-import 'package:flutter_rust/global.dart';
+import 'package:flutter_rust/db/db.dart';
 
 class Messages {
   const Messages._();

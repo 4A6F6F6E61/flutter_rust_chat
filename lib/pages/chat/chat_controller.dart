@@ -5,7 +5,7 @@ import 'package:flutter_rust/db/db_chat.dart';
 import 'package:flutter_rust/db/db_message.dart';
 import 'package:flutter_rust/db/db_user.dart';
 import 'package:flutter_rust/db/messages.dart';
-import 'package:flutter_rust/global.dart';
+import 'package:flutter_rust/db/db.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -20,6 +20,8 @@ class ChatController extends GetxController {
 
   RxList<DBMessage> messages = <DBMessage>[].obs;
 
+  Rx<DBMessage?> replyTo = Rx<DBMessage?>(null);
+
   TextEditingController messageController = TextEditingController();
 
   @override
@@ -27,6 +29,16 @@ class ChatController extends GetxController {
     chat(Get.arguments);
     messages.bindStream(Messages.getAll(chat.value.id));
     super.onInit();
+  }
+
+  void messageSwipeRight(DBMessage message) {
+    log('Swiped right on message ${message.id}');
+  }
+
+  void messageSwipeLeft(DBMessage message) {
+    log('Swiped left on message ${message.id}');
+
+    replyTo(message);
   }
 
   void sendMessage() async {

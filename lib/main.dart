@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rust/global.dart';
+import 'package:flutter_rust/db/db.dart';
 import 'package:flutter_rust/pages/chat/chat_binding.dart';
 import 'package:flutter_rust/pages/chat/chat_page.dart';
 import 'package:flutter_rust/pages/home/tabs/home_page.dart';
@@ -88,13 +88,10 @@ class Splash extends StatelessWidget {
       },
       theme: ThemeData(
         brightness: Brightness.light,
-        /* light theme settings */
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        /* dark theme settings */
       ),
-      themeMode: ThemeMode.system,
       getPages: [
         GetPage(
           name: '/login',

@@ -1,5 +1,5 @@
 import 'package:flutter_rust/db/db_user.dart';
-import 'package:flutter_rust/global.dart';
+import 'package:flutter_rust/db/db.dart';
 
 class Users {
   static Stream<List<Map<String, dynamic>>> getAll() {
