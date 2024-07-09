@@ -57,16 +57,16 @@ class ChatController extends GetxController {
     log("Context is null: ${context == null}");
 
     while (context == null) {
-      scrollController.animateTo(
+      await scrollController.animateTo(
         scrollController.offset + 50, // Adjust the value as needed
         duration: const Duration(milliseconds: 10),
         curve: Curves.easeInOut,
       );
       context = key.currentContext;
-      await Future.delayed(const Duration(milliseconds: 10)); // Add a small delay
     }
 
     Scrollable.ensureVisible(
+      // ignore: use_build_context_synchronously
       context,
       duration: const Duration(milliseconds: 500),
     );
