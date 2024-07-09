@@ -24,6 +24,7 @@ class MessagesView extends StatelessWidget {
           }
           if (message.replyTo == null) {
             return SwipeableMessage(
+              key: ValueKey<int>(message.id),
               message: message,
               isSender: isSender,
               tail: tail,
@@ -37,6 +38,7 @@ class MessagesView extends StatelessWidget {
               controller.chat.value.participants.firstWhere((u) => u.id == replyContent.userId);
 
           return SwipeableMessage(
+            key: ValueKey<int>(message.id),
             message: message,
             replyContent: replyContent,
             replyUser: replyUser,

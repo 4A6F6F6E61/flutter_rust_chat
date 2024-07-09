@@ -1,10 +1,14 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rust/db/db_message.dart';
 import 'package:flutter_rust/db/db_user.dart';
+import 'package:flutter_rust/pages/chat/chat_controller.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SwipeableMessage extends StatefulWidget {
   final DBMessage message;
@@ -107,7 +111,13 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final chatController = Get.find<ChatController>();
     return GestureDetector(
       onHorizontalDragUpdate: _handleDragUpdate,
       onHorizontalDragEnd: _handleDragEnd,
@@ -152,13 +162,31 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
                             widget.replyContent != null &&
                             widget.replyUser != null)
                           ReplyText(reply: widget.replyContent!, from: widget.replyUser!),
-                        Text(
-                          widget.message.content,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+                        if (widget.message.type == MessageType.image)
+                          Obx(
+                            () => chatController.images[widget.message.content] != null
+                                ? Image(
+                                    image: chatController.images[widget.message.content]!,
+                                    fit: BoxFit.cover,
+                                    width: 200,
+                                    height: 200,
+                                  )
+                                : const SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          )
+                        else if (widget.message.type == MessageType.text)
+                          Text(
+                            widget.message.content,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
