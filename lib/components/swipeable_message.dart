@@ -118,6 +118,7 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
   @override
   Widget build(BuildContext context) {
     final chatController = Get.find<ChatController>();
+    final maxBubbleSize = MediaQuery.of(context).size.width * 0.7;
     return GestureDetector(
       onHorizontalDragUpdate: _handleDragUpdate,
       onHorizontalDragEnd: _handleDragEnd,
@@ -135,10 +136,10 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
               key: _key,
               builder: (context) {
                 return Container(
-                  padding: const EdgeInsets.all(8),
-                  margin: const EdgeInsets.all(4),
+                  padding: EdgeInsets.all(widget.message.type == MessageType.text ? 8 : 3),
+                  margin: const EdgeInsets.all(2),
                   constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
+                    maxWidth: maxBubbleSize,
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -165,17 +166,37 @@ class _SwipeableMessageState extends State<SwipeableMessage> {
                         if (widget.message.type == MessageType.image)
                           Obx(
                             () => chatController.images[widget.message.content] != null
-                                ? Image(
-                                    image: chatController.images[widget.message.content]!,
-                                    fit: BoxFit.cover,
-                                    width: 200,
-                                    height: 200,
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(13.0),
+                                    child: Hero(
+                                      tag: widget.message.content,
+                                      child: Image(
+                                        image: chatController.images[widget.message.content]!,
+                                        fit: BoxFit.cover,
+                                        height: maxBubbleSize,
+                                        width: maxBubbleSize,
+                                        loadingBuilder: (context, child, loadingProgress) =>
+                                            loadingProgress == null
+                                                ? child
+                                                : SizedBox(
+                                                    width: maxBubbleSize,
+                                                    height: maxBubbleSize,
+                                                    child: const Center(
+                                                      child: CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                      ),
+                                    ),
                                   )
-                                : const SizedBox(
-                                    width: 200,
-                                    height: 200,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
+                                : SizedBox(
+                                    width: maxBubbleSize,
+                                    height: maxBubbleSize,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                           )
@@ -209,53 +230,60 @@ class ReplyText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(radius),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(radius),
-                  bottomLeft: Radius.circular(radius),
+    return GestureDetector(
+      onTap: () {
+        final controller = Get.find<ChatController>();
+
+        controller.scrollToMessage(reply.id);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(radius),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(radius),
+                    bottomLeft: Radius.circular(radius),
+                  ),
+                ),
+                width: 4,
+              ),
+              Expanded(
+                // Add Expanded here
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        from.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        reply.content,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
+                        softWrap: true, // Ensure the text wraps
+                        maxLines: null, // Allow unlimited lines
+                        overflow: TextOverflow.visible, // Ensure overflow is visible
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              width: 4,
-            ),
-            Expanded(
-              // Add Expanded here
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      from.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      reply.content,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white70,
-                      ),
-                      softWrap: true, // Ensure the text wraps
-                      maxLines: null, // Allow unlimited lines
-                      overflow: TextOverflow.visible, // Ensure overflow is visible
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

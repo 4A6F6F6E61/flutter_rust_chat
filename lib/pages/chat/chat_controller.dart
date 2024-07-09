@@ -16,6 +16,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class ChatController extends GetxController {
   RxBool loading = true.obs;
 
+  ScrollController scrollController = ScrollController();
+
   Rx<DBChat> chat = const DBChat(
           id: -1,
           participants: [
@@ -30,6 +32,7 @@ class ChatController extends GetxController {
 
   TextEditingController messageController = TextEditingController();
 
+  RxMap<int, GlobalKey> messageKeys = RxMap<int, GlobalKey>();
   RxMap<String, CachedNetworkImageProvider> images = RxMap<String, CachedNetworkImageProvider>();
 
   @override
@@ -37,14 +40,39 @@ class ChatController extends GetxController {
     chat(Get.arguments);
     messages.bindStream(Messages.getAll(chat.value.id));
 
-    ever(messages, (_) {
+    ever(messages, (_) async {
+      await loadImages();
       loading.value = false;
-      loadImages();
     });
     super.onInit();
   }
 
-  void loadImages() async {
+  void scrollToMessage(int messageId) async {
+    final key = messageKeys[messageId];
+
+    if (key == null) return;
+
+    var context = key.currentContext;
+
+    log("Context is null: ${context == null}");
+
+    while (context == null) {
+      scrollController.animateTo(
+        scrollController.offset + 50, // Adjust the value as needed
+        duration: const Duration(milliseconds: 10),
+        curve: Curves.easeInOut,
+      );
+      context = key.currentContext;
+      await Future.delayed(const Duration(milliseconds: 10)); // Add a small delay
+    }
+
+    Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 500),
+    );
+  }
+
+  Future<void> loadImages() async {
     for (final message in messages) {
       if (message.type == MessageType.image) {
         final url = await Supabase.instance.client.storage

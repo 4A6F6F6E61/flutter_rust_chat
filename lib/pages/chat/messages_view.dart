@@ -12,6 +12,7 @@ class MessagesView extends StatelessWidget {
     final controller = Get.find<ChatController>();
     return Obx(
       () => ListView(
+        controller: controller.scrollController,
         reverse: true,
         children: controller.messages.reversed.map((message) {
           final isSender = message.userId == Supabase.instance.client.auth.currentUser?.id;
@@ -22,9 +23,11 @@ class MessagesView extends StatelessWidget {
                   message.userId) {
             tail = true;
           }
+          controller.messageKeys[message.id] = GlobalKey();
+
           if (message.replyTo == null) {
             return SwipeableMessage(
-              key: ValueKey<int>(message.id),
+              key: controller.messageKeys[message.id],
               message: message,
               isSender: isSender,
               tail: tail,
@@ -38,7 +41,7 @@ class MessagesView extends StatelessWidget {
               controller.chat.value.participants.firstWhere((u) => u.id == replyContent.userId);
 
           return SwipeableMessage(
-            key: ValueKey<int>(message.id),
+            key: controller.messageKeys[message.id],
             message: message,
             replyContent: replyContent,
             replyUser: replyUser,
